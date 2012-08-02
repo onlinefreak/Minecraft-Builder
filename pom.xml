@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <!-- Edit settings here -->
+  <properties>
+  	<PLUGIN.NAME>TestPlugin</PLUGIN.NAME>
+  	<GROUP>com.beckesoft</GROUP>
+  	<VERSION>0.0.1</VERSION>
+	<BUKKIT.VERSION>1.2.5-R5.0</BUKKIT.VERSION>
+	<RAMUSAGE>1G</RAMUSAGE>
+	
+	<!-- Unix only! -->
+	<SCREEN.SERVERID>Minecraft</SCREEN.SERVERID>
+	
+	<BUKKIT.REPOSITORY>http://repo.bukkit.org/content/groups/public</BUKKIT.REPOSITORY>
+	<CRAFTBUKKIT.PATH>org/bukkit/craftbukkit</CRAFTBUKKIT.PATH>
+  </properties>
+  <!-- Do not modify below -->
+  
+  <groupId>${GROUP}</groupId>
+  <artifactId>${PLUGIN.NAME}</artifactId>
+  <version>${VERSION}</version>
+  
+  
+  <build>
+	<plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <phase> package </phase>
+            <configuration>
+			  <target>
+			  	<ant antfile="./build.xml" target="execBuild" />
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+ 
+  
+  <repositories>
+  	<repository>
+  		<id>org.bukkit</id>
+  		<url>http://repo.bukkit.org/content/groups/public/</url>
+  	</repository>
+  </repositories>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>org.bukkit</groupId>
+  		<artifactId>bukkit</artifactId>
+  		<version>${BUKKIT.VERSION}</version>
+  	</dependency>
+  </dependencies>
+</project>

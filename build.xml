@@ -1,0 +1,52 @@
+<project>
+	<target name="getOs">
+		<condition property="OS.WINDOWS">
+			<os family="windows" />
+		</condition>
+		<condition property="OS.UNIX">
+			<os family="unix" />
+		</condition>
+	</target>
+	
+	<!-- Download server and set reloader -->
+	<target name="createServerWindows" if="OS.WINDOWS">
+		<echo file="./TestServer/start.bat">TITLE Minecraft Test Server${line.separator}java -jar minecraft_server.bat</echo><echo file="./TestServer/start.bat">TITLE Minecraft Test Server${line.separator}java -Xmx${RAMUSAGE} -Xms${RAMUSAGE} -jar minecraft_server.jar nogui</echo>
+	</target>
+	
+	<target name="createServerUNIX" if="OS.UNIX">
+		<echo file="./TestServer/start.sh">#!bin/bash${line.separator}${line.separator}function is_running() {${line.separator}	if ps aux | grep -v grep | grep SCREEN | grep "${SCREEN.SERVERID} " > /dev/null 2>&amp;1${line.separator}	then${line.separator}		return 0${line.separator}	else${line.separator}		return 1${line.separator}	fi${line.separator}}${line.separator}${line.separator}if is_running${line.separator}	then${line.separator}		screen -S "${SCREEN.SERVERID}" -p 0 -X eval 'stuff "reload\015"'${line.separator}	else${line.separator}		screen -dmS "${SCREEN.SERVERID}" java -Xmx${RAMUSAGE} -Xms${RAMUSAGE} -jar minecraft_server.jar nogui${line.separator}fi</echo>
+		<chmod file="./TestServe/start.sh" perm="a+x"></chmod>
+		
+	</target>
+	<!-- Download server and set reload end -->
+	
+	<target name="getInitialized">
+		<available file="./TestServer/minecraft_server.jar" property="INITIALIZED"></available>
+	</target>
+			
+	<target name="init" depends="getOs,getInitialized" unless="INITIALIZED">
+		<mkdir dir="./TestServer"/>
+		<get src="${BUKKIT.REPOSITORY}/${CRAFTBUKKIT.PATH}/${BUKKIT.VERSION}/craftbukkit-${BUKKIT.VERSION}.jar" dest="./TestServer/minecraft_server.jar" />
+		<antcall target="createServerUNIX" />
+		<antcall target="createServerWindows" />
+	</target>
+	
+	
+	<target name="testBuild" if="testBuild">
+		<copy file="./target/${PLUGIN.NAME}-${VERSION}.jar" tofile="./TestServer/plugins/${PLUGIN.NAME}-${VERSION}.jar" />
+		
+		<condition property="SERVER.RELOADER" value="./TestServer/reloadServer.exe">
+			<os family="windows" />
+		</condition>
+		<condition property="SERVER.RELOADER" value="./TestServer/start.sh">
+			<os family="unix" />
+		</condition>
+		
+		<exec executable="${SERVER.RELOADER}" dir="./TestServer" />
+	</target>
+	
+	<target name="execBuild">
+		<antcall target="init" />
+		<antcall target="testBuild" />
+	</target>
+</project>
